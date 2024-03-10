@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using ApprovalTests;
@@ -12,17 +13,32 @@ namespace csharp
     public class ApprovalTest
     {
         [Test]
-        public void ThirtyDays()
+        public void UpdateQuality_InitialState_ApprovalTest()
         {
-            
-            StringBuilder fakeoutput = new StringBuilder();
-            Console.SetOut(new StringWriter(fakeoutput));
-            Console.SetIn(new StringReader("a\n"));
+            // Arrange
+            var items = new List<Item>
+            {
+                new() {Name = "+5 Dexterity Vest", SellIn = 10, Quality = 20},
+                new() {Name = "Aged Brie", SellIn = 2, Quality = 0},
+                new() {Name = "Elixir of the Mongoose", SellIn = 5, Quality = 7},
+                new() {Name = "Sulfuras, Hand of Ragnaros", SellIn = 0, Quality = 80},
+                new() {Name = "Backstage passes to a TAFKAL80ETC concert", SellIn = 15, Quality = 20},
+                new() {Name = "Conjured Mana Cake", SellIn = 3, Quality = 6}
+            };
 
-            Program.Main(new string[] { "30" });
-            var output = fakeoutput.ToString();
+            var gildedRose = new GildedRose(items);
 
-            Approvals.Verify(output);
+            // Act
+            gildedRose.UpdateQuality();
+
+            var updatedItemsStringBuilder = new StringBuilder();
+            foreach (var item in items)
+            {
+                updatedItemsStringBuilder.AppendLine($"{item.Name}, {item.SellIn}, {item.Quality}");
+            }
+
+            // Assert
+            Approvals.Verify(updatedItemsStringBuilder.ToString());
         }
     }
 }
